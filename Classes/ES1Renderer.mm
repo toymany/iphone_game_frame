@@ -38,10 +38,10 @@
   // Replace the implementation of this method to do your own custom drawing
     
   static const GLfloat squareVertices[] = {
-    -0.5f,  -0.33f,
-    0.5f,  -0.33f,
-    -0.5f,   0.33f,
-    0.5f,   0.33f,
+   -0.5f,  -0.5f,
+    0.5f,  -0.5f,
+   -0.5f,   0.5f,
+    0.5f,   0.5f,
   };
 	
   static const GLubyte squareColors[] = {
@@ -64,14 +64,17 @@
     
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrthof( 1.0f, 1.0f, -1.5f, 1.5f, 0.5f, -0.5f );
+	glOrthof( -1.0f, 1.0f, -1.5f, 1.5f, 0.5f, -0.5f );
+
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  glTranslatef(0.0f, (GLfloat)(sinf(transY)/2.0f), 0.0f);
-  transY += 0.075f;
+  glRotatef( transY, 0,0,1 );
+  //  glTranslatef(0.0f, (GLfloat)(sinf(transY)/2.0f), 0.0f);
+
+  transY += 0.5f;
 	
-  glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+  glClearColor(0.5f, 0.5f, 1.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
     
   glVertexPointer(2, GL_FLOAT, 0, squareVertices);
