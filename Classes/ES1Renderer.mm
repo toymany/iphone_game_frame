@@ -7,6 +7,8 @@
 //
 
 #import "ES1Renderer.h"
+#import "graphicUtil.h"
+#import "app.h"
 
 @implementation ES1Renderer
 
@@ -28,6 +30,8 @@
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
     glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
     glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, colorRenderbuffer);
+
+    m_pApp = new CApp();
   }
 	
   return self;
@@ -36,22 +40,6 @@
 - (void) render
 {
   // Replace the implementation of this method to do your own custom drawing
-    
-  static const GLfloat squareVertices[] = {
-   -0.5f,  -0.5f,
-    0.5f,  -0.5f,
-   -0.5f,   0.5f,
-    0.5f,   0.5f,
-  };
-	
-  static const GLubyte squareColors[] = {
-    255, 255,   0, 255,
-    0,   255, 255, 255,
-    0,     0,   0,   0,
-    255,   0, 255, 255,
-  };
-    
-  static float transY = 0.0f;
 	
   // This application only creates a single context which is already set current at this point.
   // This call is redundant, but needed if dealing with multiple contexts.
@@ -64,25 +52,18 @@
     
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-	glOrthof( -1.0f, 1.0f, -1.5f, 1.5f, 0.5f, -0.5f );
-
+  glOrthof( -1.0f, 1.0f, -1.5f, 1.5f, 0.5f, -0.5f );
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  glRotatef( transY, 0,0,1 );
-  //  glTranslatef(0.0f, (GLfloat)(sinf(transY)/2.0f), 0.0f);
-
-  transY += 0.5f;
 	
   glClearColor(0.5f, 0.5f, 1.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
-    
-  glVertexPointer(2, GL_FLOAT, 0, squareVertices);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glColorPointer(4, GL_UNSIGNED_BYTE, 0, squareColors);
-  glEnableClientState(GL_COLOR_ARRAY);
-    
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+  {
+    //テキストの描画
+    m_pApp->Draw();
+  }
     
   // This application only creates a single color renderbuffer which is already bound at this point.
   // This call is redundant, but needed if dealing with multiple renderbuffers.
@@ -92,44 +73,46 @@
 
 - (BOOL) resizeFromLayer:(CAEAGLLayer *)layer
 {	
-	// Allocate color buffer backing based on the current layer size
-    glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
-    [context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:layer];
-	glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &backingWidth);
-    glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &backingHeight);
+  // Allocate color buffer backing based on the current layer size
+  glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
+  [context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:layer];
+  glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &backingWidth);
+  glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &backingHeight);
 	
-    if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES)
-	{
-		NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
-        return NO;
+  if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES)
+    {
+      NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
+      return NO;
     }
     
-    return YES;
+  return YES;
 }
 
 - (void) dealloc
 {
-	// Tear down GL
-	if (defaultFramebuffer)
-	{
-		glDeleteFramebuffersOES(1, &defaultFramebuffer);
-		defaultFramebuffer = 0;
-	}
+  SAFE_DELETE( m_pApp );
 
-	if (colorRenderbuffer)
-	{
-		glDeleteRenderbuffersOES(1, &colorRenderbuffer);
-		colorRenderbuffer = 0;
-	}
+  // Tear down GL
+  if (defaultFramebuffer)
+    {
+      glDeleteFramebuffersOES(1, &defaultFramebuffer);
+      defaultFramebuffer = 0;
+    }
+
+  if (colorRenderbuffer)
+    {
+      glDeleteRenderbuffersOES(1, &colorRenderbuffer);
+      colorRenderbuffer = 0;
+    }
 	
-	// Tear down context
-	if ([EAGLContext currentContext] == context)
-        [EAGLContext setCurrentContext:nil];
+  // Tear down context
+  if ([EAGLContext currentContext] == context)
+    [EAGLContext setCurrentContext:nil];
 	
-	[context release];
-	context = nil;
+  [context release];
+  context = nil;
 	
-	[super dealloc];
+  [super dealloc];
 }
 
 @end

@@ -29,3 +29,12 @@ build/iphone_game_frame.build/iphone_game_frame.pbxindex/strings.pbxstrings/stri
 build/iphone_game_frame.build/iphone_game_frame.pbxindex/subclasses.pbxbtree
 build/iphone_game_frame.build/iphone_game_frame.pbxindex/symbols0.pbxsymbols
 *.*~
+build/iphone_game_frame.build/Debug-iphonesimulator/iphone_game_frame.build/Objects-normal/i386/app.o
+build/iphone_game_frame.build/Debug-iphonesimulator/iphone_game_frame.build/Objects-normal/i386/graphicUtil.o
+#graphicUtil.cpp#
+.#graphicUtil.cpp
+#graphicUtil.cpp#
+#graphicUtil.cpp#
+Classes/app.mm
+memo.txt
+sorami.txt
