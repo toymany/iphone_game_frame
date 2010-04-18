@@ -7,7 +7,6 @@
 //
 
 #import "ES1Renderer.h"
-#import "graphicUtil.h"
 #import "app.h"
 
 @implementation ES1Renderer
